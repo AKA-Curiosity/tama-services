@@ -8,6 +8,8 @@ services:
       dockerfile: cmd/email-service/Dockerfile  # Указываем путь до Dockerfile
     ports:
       - "8081:8081"
+    env_file:
+      - .env
     environment:
       - SMTP_SERVER=${SMTP_SERVER}
       - SMTP_PORT=${SMTP_PORT}
