@@ -21,12 +21,16 @@ jobs:
           docker-compose -f docker-compose.yml build
           docker save -o email-service.tar email-service:latest
 
+      - name: Set up SSH key
+        uses: webfactory/ssh-agent@v0.5.3
+        with:
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+
       - name: Transfer Docker Image to Server
         uses: appleboy/scp-action@v0.1.4
         with:
           host: 176.108.254.11
           username: ${{ secrets.SSH_USER }}
-          password: ${{ secrets.SSH_PASSWORD }}
           source: "email-service.tar"
           target: "/home/${{ secrets.SSH_USER }}/email-service.tar"
 
@@ -35,9 +39,9 @@ jobs:
         with:
           host: 176.108.254.11
           username: ${{ secrets.SSH_USER }}
-          password: ${{ secrets.SSH_PASSWORD }}
           script: |
             docker load -i /home/${{ secrets.SSH_USER }}/email-service.tar
             cd /home/${{ secrets.SSH_USER }}/tama-services
             docker-compose down
             docker-compose up -d --force-recreate
+
