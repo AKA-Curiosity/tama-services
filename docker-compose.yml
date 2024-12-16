@@ -9,7 +9,7 @@ services:
     ports:
       - "8081:8081"
     env_file:
-      - .env
+      - cmd/email-service/.env
     environment:
       - SMTP_SERVER=${SMTP_SERVER}
       - SMTP_PORT=${SMTP_PORT}
