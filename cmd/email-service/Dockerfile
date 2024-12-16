@@ -27,7 +27,7 @@ FROM debian:bullseye-slim
 COPY --from=builder /app/cmd/email-service/email-service /usr/local/bin/email-service
 
 # Копируем .env файл, если нужно, в финальный образ
-COPY .env .env
+COPY cmd/email-service/.env .env
 
 # Устанавливаем рабочую директорию для контейнера
 WORKDIR /app
