@@ -1,23 +1,20 @@
 # Используем официальный образ Go с нужной версией
 FROM golang:1.22 AS builder
 
-# Устанавливаем рабочую директорию
+# Устанавливаем рабочую директорию для сборки
 WORKDIR /app
 
-# Копируем go.mod и go.sum, чтобы установить зависимости
+# Копируем go.mod и go.sum для установки зависимостей
 COPY go.mod go.sum ./
 
-# Выполняем go mod tidy
+# Выполняем go mod tidy для установки зависимостей
 RUN go mod tidy
 
-# Копируем все исходные файлы из обеих директорий
-COPY cmd/email-service ./cmd/email-service
-COPY internal/email ./internal/email
+# Копируем исходники проекта
+COPY cmd ./cmd
+COPY internal ./internal
 
-# Копируем .env файл
-COPY .env .env
-
-# Переходим в директорию с main.go
+# Переходим в директорию с main.go для сборки
 WORKDIR /app/cmd/email-service
 
 # Собираем приложение
@@ -35,6 +32,10 @@ COPY .env .env
 # Устанавливаем рабочую директорию для контейнера
 WORKDIR /app
 
+# Если нужно использовать переменные окружения из .env, можно сделать это через запуск скрипта
+# Например, используем envsubst для замены значений переменных
+RUN apt-get update && apt-get install -y gettext-base
+RUN envsubst < .env > /etc/environment
+
 # Запуск сервиса
 CMD ["email-service"]
-
