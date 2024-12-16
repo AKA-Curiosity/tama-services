@@ -5,7 +5,7 @@ services:
     container_name: email-service
     build:
       context: .  # Указываем, что контекст сборки это корень проекта
-      dockerfile: cmd/email-service/Dockerfile  # Указываем путь до Dockerfile
+      dockerfile: Dockerfile  # Указываем путь до Dockerfile
     ports:
       - "8081:8081"
     env_file:
