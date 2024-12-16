@@ -10,6 +10,9 @@ COPY go.mod go.sum ./
 # Выполняем go mod tidy для установки зависимостей
 RUN go mod tidy
 
+# Создаём каталог vendor и сохраняем все зависимости
+RUN go mod vendor
+
 # Копируем исходники проекта
 COPY cmd ./cmd
 COPY internal ./internal
