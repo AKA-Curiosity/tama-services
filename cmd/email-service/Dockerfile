@@ -1,30 +1,29 @@
-# Используем официальный Go-образ для сборки
-FROM golang:1.20 AS builder
+# Используем официальный образ Go с нужной версией
+FROM golang:1.22 AS builder
 
+# Устанавливаем рабочую директорию
 WORKDIR /app
 
-# Копируем go.mod и go.sum и устанавливаем зависимости
+# Копируем файлы go.mod и go.sum
 COPY go.mod go.sum ./
+
+# Выполняем go mod tidy
 RUN go mod tidy
 
-# Копируем все исходники проекта
+# Копируем весь исходный код
 COPY . .
 
-# Сборка бинарного файла
-RUN go build -o email-service ./cmd/email-service
+# Собираем приложение
+RUN go build -o email-service .
 
-# Финальный образ с минимальной загрузкой
-FROM ubuntu:22.04
+# Финальный образ для продакшн
+FROM debian:bullseye-slim
 
-WORKDIR /app
-
-# Устанавливаем необходимые пакеты
-RUN apt-get update && apt-get install -y ca-certificates && rm -rf /var/lib/apt/lists/*
-
-# Копируем собранный бинарник
+# Копируем бинарник из предыдущего шага
 COPY --from=builder /app/email-service /usr/local/bin/email-service
 
-# Открываем порт для сервиса
-EXPOSE 8081
+# Устанавливаем рабочую директорию для контейнера
+WORKDIR /app
 
+# Запуск сервиса
 CMD ["email-service"]
