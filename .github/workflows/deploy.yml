@@ -62,7 +62,7 @@ jobs:
           echo "$SSH_PRIVATE_KEY" | tr -d '\r' > private_key.pem
           chmod 600 private_key.pem
 
-          # Добавляем сервер в known_hosts
+          # Добавляем сервер в known_hosts (если еще не добавлен)
           mkdir -p ~/.ssh
           ssh-keyscan -H $SERVER_IP >> ~/.ssh/known_hosts
 
