@@ -27,7 +27,17 @@ jobs:
         run: |
           docker build -t ta-ma-backend .
 
-      - name: SSH to the server and deploy
+      - name: Copy Docker image and files to the server
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: 176.108.254.119
+          username: aka_curiosity
+          port: 22
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          source: "./Dockerfile"
+          target: "/home/aka_curiosity/ta-ma-backend"
+
+      - name: SSH to the server and deploy Docker container
         env:
           SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
           SERVER_IP: ${{ secrets.SERVER_IP }}
@@ -36,8 +46,19 @@ jobs:
           chmod 600 private_key.pem
           
           ssh -i private_key.pem aka_curiosity@$SERVER_IP << 'EOF'
-            docker build -t ta-ma-backend /path/to/your/project
+            # Создаём директорию, если она не существует
+            mkdir -p /home/aka_curiosity/ta-ma-backend
+
+            # Переходим в директорию с проектом
+            cd /home/aka_curiosity/ta-ma-backend
+
+            # Собираем Docker образ
+            docker build -t ta-ma-backend .
+
+            # Останавливаем и удаляем старый контейнер, если есть
             docker stop ta-ma-backend || true
             docker rm ta-ma-backend || true
+
+            # Запускаем новый контейнер
             docker run -d -p 8080:8080 --name ta-ma-backend ta-ma-backend
           EOF
