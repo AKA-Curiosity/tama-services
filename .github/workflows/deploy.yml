@@ -34,7 +34,7 @@ jobs:
           username: aka_curiosity
           port: 22
           key: ${{ secrets.SSH_PRIVATE_KEY }}
-          source: "./Dockerfile"
+          source: "./"
           target: "/home/aka_curiosity/ta-ma-backend"
 
       - name: Check SSH connection
