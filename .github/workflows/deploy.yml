@@ -39,20 +39,23 @@ jobs:
 
       - name: Check SSH connection
         run: |
-          # Создаем временный файл для приватного ключа из секретов
-          echo "${{ secrets.SSH_PRIVATE_KEY }}" | tr -d '\r' > private_key.pem
-          
-          # Устанавливаем права доступа к ключу (только для чтения)
-          chmod 600 private_key.pem
-          
-          # Добавляем сервер в known_hosts (для предотвращения "Host key verification failed")
-          ssh-keyscan -H 176.108.254.119 >> ~/.ssh/known_hosts
-          
-          # Проверяем подключение к серверу через SSH
-          ssh -o StrictHostKeyChecking=no -i private_key.pem aka_curiosity@176.108.254.119 "echo 'SSH connection successful!'"
-          
-          # Удаляем временный ключ после использования
-          rm -f private_key.pem
+            # Создаем временный файл для приватного ключа из секретов
+            echo "${{ secrets.SSH_PRIVATE_KEY }}" | tr -d '\r' > private_key.pem
+            
+            # Устанавливаем права доступа к ключу (только для чтения)
+            chmod 600 private_key.pem
+            
+            # Создаем директорию для SSH, если она не существует
+            mkdir -p ~/.ssh
+            
+            # Добавляем сервер в known_hosts (для предотвращения "Host key verification failed")
+            ssh-keyscan -H 176.108.254.119 >> ~/.ssh/known_hosts
+            
+            # Проверяем подключение к серверу через SSH
+            ssh -o StrictHostKeyChecking=no -i private_key.pem aka_curiosity@176.108.254.119 "echo 'SSH connection successful!'"
+            
+            # Удаляем временный ключ после использования
+            rm -f private_key.pem
 
       - name: SSH to the server and deploy Docker container
         env:
