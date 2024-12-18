@@ -1,0 +1,12 @@
+version: '3.8'
+
+services:
+  tama-services:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8081:8081"
+    environment:
+      - DB_URI=mongodb://username:password@db_host:27017/tama
+    restart: always
