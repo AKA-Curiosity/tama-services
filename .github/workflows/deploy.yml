@@ -37,6 +37,6 @@ jobs:
 
       - name: Start Docker Container
         run: |
-          ssh -o StrictHostKeyChecking=no user@your-server-ip << 'EOF'
+          ssh -o StrictHostKeyChecking=no aka_curiosity@176.108.254.11 << 'EOF'
           docker run -d --name tama-services -p 8081:8081 tama-services:latest
           EOF
