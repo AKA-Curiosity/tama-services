@@ -24,7 +24,7 @@ jobs:
 
       - name: Deploy to Server
         run: |
-          ssh -o StrictHostKeyChecking=no user@your-server-ip << 'EOF'
+          ssh -o StrictHostKeyChecking=no aka_curiosity@176.108.254.11 << 'EOF'
           docker stop tama-services || true
           docker rm tama-services || true
           docker rmi tama-services:latest || true
