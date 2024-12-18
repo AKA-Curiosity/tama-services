@@ -18,6 +18,6 @@ func main() {
 	http.HandleFunc("/login", auth.LoginHandler)
 
 	// Запускаем сервер
-	fmt.Println("Сервер запущен на http://localhost:8081")
-	log.Fatal(http.ListenAndServe(":8081", nil))
+	fmt.Println("Сервер запущен на http://localhost:8080")
+	log.Fatal(http.ListenAndServe(":8080", nil))
 }

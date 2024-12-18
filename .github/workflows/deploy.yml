@@ -35,7 +35,7 @@ jobs:
           echo "$SSH_PRIVATE_KEY" > private_key.pem
           chmod 600 private_key.pem
           
-          ssh -i private_key.pem user@$SERVER_IP << 'EOF'
+          ssh -i private_key.pem aka_curiosity@$SERVER_IP << 'EOF'
             docker build -t ta-ma-backend /path/to/your/project
             docker stop ta-ma-backend || true
             docker rm ta-ma-backend || true
