@@ -37,16 +37,19 @@ jobs:
           source: "./Dockerfile"
           target: "/home/aka_curiosity/ta-ma-backend"
 
-      - name: Add server to known_hosts
+      - name: Check SSH connection
         run: |
-          mkdir -p ~/.ssh
-          ssh-keyscan -H $SERVER_IP >> ~/.ssh/known_hosts
-          chmod 644 ~/.ssh/known_hosts
-
-      - name: Debug SSH key
-        run: |
-          echo "$SSH_PRIVATE_KEY" > private_key.pem
-          chmod 600 private_key.pem
+            # Создаем временный файл для приватного ключа из секретов
+            echo "${{ secrets.SSH_PRIVATE_KEY }}" | tr -d '\r' > private_key.pem
+            
+            # Устанавливаем права доступа к ключу (только для чтения)
+            chmod 600 private_key.pem
+            
+            # Проверяем подключение к серверу через SSH
+            ssh -o StrictHostKeyChecking=no -i private_key.pem aka_curiosity@176.108.254.119 "echo 'SSH connection successful!'"
+            
+            # Удаляем временный ключ после использования
+            rm -f private_key.pem
 
       - name: SSH to the server and deploy Docker container
         env:
