@@ -37,7 +37,7 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 
 	// Если проверка прошла, возвращаем успешный ответ
 	w.WriteHeader(http.StatusOK)
-	fmt.Fprintf(w, "Вход успешен! Добро пожаловать, %s", creds.Username)
+	fmt.Fprintf(w, "Вход успешен! Добро проваливать, %s", creds.Username)
 }
 
 // Функция для проверки логина и пароля
