@@ -2,29 +2,26 @@ package db
 
 import (
 	"context"
-	"fmt"
+	"log"
 	"time"
 
+	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 var client *mongo.Client
 
-// Функция для подключения к базе данных
-func ConnectToDB() error {
-	uri := "mongodb://admin:Bo5aK5!t@212.67.11.16:27017/tama"
-	clientOptions := options.Client().ApplyURI(uri).SetAuth(options.Credential{
-		Username:      "admin",
-		Password:      "Bo5aK5!t",
-		AuthSource:    "admin",
-		AuthMechanism: "SCRAM-SHA-256",
-	})
+type User struct {
+	Email    string `bson:"email"`
+	Password string `bson:"password"`
+}
 
+func InitMongoDB(uri string) {
 	var err error
-	client, err = mongo.NewClient(clientOptions)
+	client, err = mongo.NewClient(options.Client().ApplyURI(uri))
 	if err != nil {
-		return fmt.Errorf("ошибка создания клиента: %v", err)
+		log.Fatalf("Failed to create MongoDB client: %v", err)
 	}
 
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
@@ -32,13 +29,18 @@ func ConnectToDB() error {
 
 	err = client.Connect(ctx)
 	if err != nil {
-		return fmt.Errorf("ошибка подключения: %v", err)
+		log.Fatalf("Failed to connect to MongoDB: %v", err)
 	}
-
-	return nil
 }
 
-// Функция для получения коллекции пользователей
-func GetUserCollection() *mongo.Collection {
-	return client.Database("tama").Collection("ta-ma-db")
+func FindUserByEmail(email string) (*User, error) {
+	collection := client.Database("tama").Collection("ta-ma-db")
+	var user User
+	err := collection.FindOne(context.TODO(), bson.M{"email": email}).Decode(&user)
+	if err != nil {
+		log.Printf("Error finding user: %v", err)
+		return nil, err
+	}
+	log.Printf("Found user: %+v", user)
+	return &user, nil
 }
