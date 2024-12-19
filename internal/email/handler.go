@@ -1,6 +1,7 @@
 package email
 
 import (
+	"crypto/tls"
 	"fmt"
 	"gopkg.in/gomail.v2"
 	"log"
@@ -24,7 +25,9 @@ func sendEmail(to string, subject string, body string) error {
 	m.SetBody("text/plain", body)
 
 	d := gomail.NewDialer(SMTPServer, SMTPPort, Email, Password)
-	d.SSL = true // Включаем SSL
+	d.TLSConfig = &tls.Config{
+		InsecureSkipVerify: true, // Отключаем проверку сертификата
+	}
 
 	if err := d.DialAndSend(m); err != nil {
 		return fmt.Errorf("ошибка отправки письма: %w", err)
